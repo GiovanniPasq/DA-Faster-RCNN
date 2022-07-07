@@ -12,12 +12,12 @@ This is the implementation of CVPR 2018 work 'Domain Adaptive Faster R-CNN for O
 ## Dataset
 You can find at the following links two datasets for Unsupervised Domain Adaptation for Object Detection:
 [Cityscapes-Foggy Cityscapes](https://github.com/fpv-iplab/Cityscapes-FoggyCityscapes)<br>
-[UDA-CH](https://iplab.dmi.unict.it/EGO-CH-OBJ-UDA/EGO-CH-OBJ-UDA.zip)
+[UDA-CH](https://github.com/fpv-iplab/DA-RetinaNet#dataset)
 
 ## Contributing
 This repo is actively developed. Any contribution in the form of a suggestion, bug report or pull request, is well accepted 😊<br>
 Please leave a star ⭐ if you use this repository for your project.
 
 ## Related Work
-[DA-RetinaNet](https://github.com/fpv-iplab/SDA-RetinaNet)<br>
+[DA-RetinaNet](https://github.com/fpv-iplab/DA-RetinaNet)<br>
 [STMDA-RetinaNet](https://github.com/fpv-iplab/STMDA-RetinaNet)<br>
