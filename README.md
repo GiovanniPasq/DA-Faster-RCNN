@@ -27,7 +27,7 @@ You can find at the following links two datasets for Unsupervised Domain Adaptat
 [UDA-CH](https://github.com/fpv-iplab/DA-RetinaNet#dataset)
 
 ## CNN Backbone
-this implementation work with C4, DC5 and FPN backbones.
+This implementation work with C4, DC5 and FPN backbones.
 
 ## Data Preparation
 If you want to use this code with your dataset arrange the dataset in the format of COCO or PASCAL VOC.
@@ -49,7 +49,6 @@ You need to replace the parameters inside the register_pascal_voc() function acc
 Replace at the following path ```../usr/local/lib/python3.7/dist-packages/detectron2/modeling/meta_arch/``` the ```rcnn.py``` script with my ```rcnn.py```.<br>
 Do the same for the ```roi_heads.py``` file at the path ```../usr/local/lib/python3.7/dist-packages/detectron2/modeling/roi_heads/```<br>
 Inside the folder ```../usr/local/lib/python3.7/dist-packages/detectron2/modeling/``` create a folder called ```da_modules``` and upload the three files:<br>```grad_rev_layer.py```<br>```image_level_discriminators.py```<br>```instance_level_discriminators.py```
-Load the dataset in Google Drive and import it running the cell below.
 
 ## Test
 If you want to test the model load the new weights, set to 0 the number of iterations and rerun the same script used for the training. If the annotations are in PASCAL VOC use the ```PascalVOCDetectionEvaluator``` otherwise ```COCOEvaluator```
