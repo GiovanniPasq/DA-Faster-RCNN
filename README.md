@@ -7,15 +7,16 @@ This is the implementation of CVPR 2018 work 'Domain Adaptive Faster R-CNN for O
 
 ## Installation
 You can use this repo following one of these three methods:<br>
+NB: Detectron2 0.6 is required, installing other versions this code will not work.
 
 ### Google Colab
 Load and run the ```DA-Faster-RCNN.ipynb``` on Google Colab following the instructions inside the notebook.
 
 ### Detectron 2 on your PC
-Coming soon
+Follow the official guide to install [Detectron2 0.6](https://github.com/facebookresearch/detectron2/blob/main/INSTALL.md)
 
 ### Detectron2 via Dockerfile
-Coming soon
+Follow the official guide to install [Detectron2 0.6](https://github.com/facebookresearch/detectron2/blob/main/docker/README.md)
 
 ## Dataset
 You can find at the following links two datasets for Unsupervised Domain Adaptation for Object Detection:
