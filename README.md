@@ -26,6 +26,9 @@ You can find at the following links two datasets for Unsupervised Domain Adaptat
 [Cityscapes-Foggy Cityscapes](https://github.com/fpv-iplab/Cityscapes-FoggyCityscapes)<br>
 [UDA-CH](https://github.com/fpv-iplab/DA-RetinaNet#dataset)
 
+## CNN Backbone
+this implementation work with C4, DC5 and FPN backbones.
+
 ## Data Preparation
 If you want to use this code with your dataset arrange the dataset in the format of COCO or PASCAL VOC.
 For COCO annotations, inside the script uda_train.py register your dataset using:
@@ -50,6 +53,9 @@ Load the dataset in Google Drive and import it running the cell below.
 
 ## Test
 If you want to test the model load the new weights, set to 0 the number of iterations and rerun the same script used for the training. If the annotations are in PASCAL VOC use the ```PascalVOCDetectionEvaluator``` otherwise ```COCOEvaluator```
+
+## TO DO
+Consistency Regularization loss is currently not implemented, i'm working on to implement it.
 
 ## Related Work
 [DA-RetinaNet](https://github.com/fpv-iplab/DA-RetinaNet)<br>
