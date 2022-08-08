@@ -23,7 +23,7 @@ Follow the official guide to install [Detectron2 0.6](https://github.com/faceboo
 
 ## Dataset
 You can find at the following links two datasets for Unsupervised Domain Adaptation for Object Detection:<br>
-[Cityscapes-Foggy Cityscapes](https://github.com/fpv-iplab/Cityscapes-FoggyCityscapes)<br>
+Create the Cityscapes-Foggy Cityscapes dataset following the instructions available [here](https://github.com/yuhuayc/da-faster-rcnn/tree/master/prepare_data)<br>
 [UDA-CH](https://github.com/fpv-iplab/DA-RetinaNet#dataset)
 
 ## CNN Backbone
