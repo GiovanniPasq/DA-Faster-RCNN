@@ -1,7 +1,6 @@
 # Detectron2 implementation of DA-Faster-RCNN
 
 This is the implementation of CVPR 2018 work 'Domain Adaptive Faster R-CNN for Object Detection in the Wild'. The aim is to improve the cross-domain robustness of object detection, in the screnario where training and test data are drawn from different distributions. The original paper can be found [here](https://openaccess.thecvf.com/content_cvpr_2018/papers/Chen_Domain_Adaptive_Faster_CVPR_2018_paper.pdf) <br>
-This repo is actively developed. Any contribution in the form of a suggestion, bug report or pull request, is well accepted 😊<br>
 If you want to use this repo with your dataset follow the following guide.<br>
 Please leave a star ⭐ if you use this repository for your project.
 
@@ -52,9 +51,6 @@ Inside the folder ```../usr/local/lib/python3.7/dist-packages/detectron2/modelin
 
 ## Test
 If you want to test the model load the new weights, set to 0 the number of iterations and rerun the same script used for the training. If the annotations are in PASCAL VOC use the ```PascalVOCDetectionEvaluator``` otherwise ```COCOEvaluator```
-
-## TO DO
-Consistency Regularization loss is currently not implemented, i'm working on to implement it.
 
 ## Related Work
 [DA-RetinaNet](https://github.com/fpv-iplab/DA-RetinaNet)<br>
