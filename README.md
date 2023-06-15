@@ -45,10 +45,11 @@ register_pascal_voc("city_testT", "cityscape/VOC2007/", "test_t", 2007, ['car','
 You need to replace the parameters inside the register_pascal_voc() function according to your dataset name and classes.
 
 ## Train
-Replace at the following path ```../usr/local/lib/python3.7/dist-packages/detectron2/modeling/meta_arch/``` the ```rcnn.py``` script with my ```rcnn.py```.<br>
+Replace at the following path if you use Google Colab  ```../usr/local/lib/python3.7/dist-packages/detectron2/modeling/meta_arch/``` the ```rcnn.py``` script with my ```rcnn.py```.<br>
 Do the same for the ```roi_heads.py``` file at the path ```../usr/local/lib/python3.7/dist-packages/detectron2/modeling/roi_heads/```<br>
 Inside the folder ```../usr/local/lib/python3.7/dist-packages/detectron2/modeling/``` create a folder called ```da_modules``` and upload the three files:<br>```grad_rev_layer.py```<br>```image_level_discriminators.py```<br>```instance_level_discriminators.py```
-
+NB: Python versione may vary <br>
+If you use your pc you need to replace the files that you will find in the Detectron2 folder that you have cloned from the official GitHub repo.
 ## Test
 If you want to test the model load the new weights, set to 0 the number of iterations and rerun the same script used for the training. If the annotations are in PASCAL VOC use the ```PascalVOCDetectionEvaluator``` otherwise ```COCOEvaluator```
 
