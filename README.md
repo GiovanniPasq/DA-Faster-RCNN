@@ -26,7 +26,8 @@ Create the Cityscapes-Foggy Cityscapes dataset following the instructions availa
 Synthetic to Real Artwork [UDA-CH](https://github.com/fpv-iplab/DA-RetinaNet#dataset)
 
 ## CNN Backbone
-This implementation work with C4, DC5 and FPN backbones.
+This implementation work with C4, DC5 and FPN backbones (R50 and R101).
+FPN backbones should have higher performance.
 
 ## Data Preparation
 If you want to use this code with your dataset arrange the dataset in the format of COCO or PASCAL VOC.
