@@ -56,16 +56,18 @@ class GeneralizedRCNN(nn.Module):
         self.backbone = backbone
         self.proposal_generator = proposal_generator
         self.roi_heads = roi_heads
-        if "FPN" in model_weights:
-            self.backbone_name = "FPN"
-            self.dim_in_feature_discriminator = 256
-        elif "DC5" in model_weights:
-            self.backbone_name = "DC5"
-            self.dim_in_feature_discriminator = 2048
-        elif "C4" in model_weights:
-            self.backbone_name = "C4"
-            self.dim_in_feature_discriminator = 1024
-        self.discriminator = Discriminator(self.dim_in_feature_discriminator)
+        
+        if self.training:
+            if "FPN" in model_weights:
+                self.backbone_name = "FPN"
+                self.dim_in_feature_discriminator = 256
+            elif "DC5" in model_weights:
+                self.backbone_name = "DC5"
+                self.dim_in_feature_discriminator = 2048
+            elif "C4" in model_weights:
+                self.backbone_name = "C4"
+                self.dim_in_feature_discriminator = 1024
+            self.discriminator = Discriminator(self.dim_in_feature_discriminator)
         
         self.input_format = input_format
         self.vis_period = vis_period
