@@ -50,8 +50,8 @@ def do_train(cfg_source, cfg_target, model, resume = False):
         for data_source, data_target, iteration in zip(data_loader_source, data_loader_target, range(start_iter, max_iter)):
             storage.iter = iteration
 
-            loss_dict = model(data_source, False, 0.1)
-            loss_dict_target = model(data_target, True, 0.1)
+            loss_dict = model(data_source, False, 0.5)
+            loss_dict_target = model(data_target, True, 0.5)
             
             loss_dict["loss_image_d"] += loss_dict_target["loss_image_d"]
             loss_dict["loss_instance_d"] += loss_dict_target["loss_instance_d"]
