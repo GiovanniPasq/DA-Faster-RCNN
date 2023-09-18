@@ -13,6 +13,7 @@ NB: Detectron2 0.6 is required, installing other versions this code will not wor
 
 ### Google Colab
 Load the ```DA-Faster-RCNN.ipynb``` notebook on Google Colab and follow the instructions inside.
+Quickstart here 👉 [![Open In Colab](https://colab.research.google.com/gist/GiovanniPasq/9c0e99cde5df9aa09e3aff3295637a61/da-faster-rcnn.ipynb)
 
 ### Detectron 2 on your PC
 Follow the official guide to install [Detectron2 0.6](https://github.com/facebookresearch/detectron2/blob/main/INSTALL.md)
