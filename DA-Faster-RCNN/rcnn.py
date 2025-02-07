@@ -185,14 +185,14 @@ class GeneralizedRCNN(nn.Module):
             proposals = [x["proposals"].to(self.device) for x in batched_inputs]
             proposal_losses = {}
 
-        #inserire qui il modulo di allineamento delle proposal
+        #add here alignment proposal module
         _, detector_losses = self.roi_heads(images, features, proposals, gt_instances, target_domain, alpha)
         if self.vis_period > 0:
             storage = get_event_storage()
             if storage.iter % self.vis_period == 0:
                 self.visualize_training(batched_inputs, proposals)
 
-        #aggiungere qui loss consistency
+        #add here consistency loss
         losses = {}
         losses.update(detector_losses)
         losses.update(proposal_losses)
