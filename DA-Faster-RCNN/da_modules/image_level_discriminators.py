@@ -1,32 +1,27 @@
 import torch
 from torch import nn
-from .grad_rev_layer import *
-from fvcore.nn import sigmoid_focal_loss_jit
+import torch.nn.functional as F
+from .grad_rev_layer import GradReverse
 
-class Discriminator(nn.Module):
-    def __init__(self, in_feature):
-        super(Discriminator, self).__init__()
-        self.reducer = nn.Sequential(
-            nn.Conv2d(in_feature, int(in_feature/2), kernel_size = (1, 1) ,bias = False),  
+class ImageDomainDiscriminator(nn.Module):
+    def __init__(self, in_channels: int):
+        super(ImageDomainDiscriminator, self).__init__()
+        self.net = nn.Sequential(
+            nn.Conv2d(in_channels, in_channels // 2, kernel_size=3, padding=1, bias=False),
             nn.ReLU(inplace=True),
-            nn.Conv2d(int(in_feature/2), int(in_feature/4), kernel_size = (1, 1) ,bias = False),  
+            nn.Conv2d(in_channels // 2, in_channels // 4, kernel_size=3, padding=1, bias=False),
             nn.ReLU(inplace=True),
-            nn.AdaptiveAvgPool2d((1, 1)),
-            nn.Conv2d(int(in_feature/4), 1, kernel_size=(1, 1), bias = False)
+            nn.Conv2d(in_channels // 4, 1, kernel_size=1, bias=False)  
         ).cuda()
-        
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                torch.nn.init.normal_(m.weight, mean=0.0, std=0.01)
 
-    def forward(self, x, domain_target = False, alpha = 1):
-        x = GradReverse.apply(x, alpha)
-        x = self.reducer(x) 
-        x = torch.flatten(x, 1)
-        if domain_target:
-            domain_t = torch.ones(x.size()).float().cuda()
-            loss = sigmoid_focal_loss_jit(x, domain_t, alpha=0.25,gamma=2,reduction="mean")
-        else:
-            domain_s = torch.zeros(x.size()).float().cuda()
-            loss = sigmoid_focal_loss_jit(x, domain_s, alpha=0.25,gamma=2,reduction="mean")
-        return {"loss_image_d": loss}
+    def forward(self, x: torch.Tensor, domain_target: bool = False, alpha: float = 1.0):
+        x = GradReverse.apply(x, alpha)          
+        logits = self.net(x)                     
+
+        target = torch.ones_like(logits).cuda() if domain_target else torch.zeros_like(logits).cuda()
+        loss = F.binary_cross_entropy_with_logits(logits, target, reduction='mean')
+
+        return {
+            "loss_image_d": loss,
+            "logits": logits 
+        }

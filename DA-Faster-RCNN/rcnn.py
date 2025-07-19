@@ -18,6 +18,8 @@ from ..proposal_generator import build_proposal_generator
 from ..roi_heads import build_roi_heads
 from .build import META_ARCH_REGISTRY
 from ..da_modules.image_level_discriminators import *
+from ..da_modules.consistency_regularization_loss import *
+
 __all__ = ["GeneralizedRCNN", "ProposalNetwork"]
 
 @META_ARCH_REGISTRY.register()
@@ -67,7 +69,7 @@ class GeneralizedRCNN(nn.Module):
             elif "C4" in model_weights:
                 self.backbone_name = "C4"
                 self.dim_in_feature_discriminator = 1024
-            self.discriminator = Discriminator(self.dim_in_feature_discriminator)
+            self.discriminator = ImageDomainDiscriminator(self.dim_in_feature_discriminator)
         
         self.input_format = input_format
         self.vis_period = vis_period
@@ -172,14 +174,19 @@ class GeneralizedRCNN(nn.Module):
         features = self.backbone(images.tensor)
 
         if self.backbone_name == "FPN":
-            loss_discriminator =  self.discriminator(features["p5"], target_domain, alpha)
+            disc_out =  self.discriminator(features["p5"], target_domain, alpha)
         elif self.backbone_name == "C4":
-            loss_discriminator =  self.discriminator(features["res4"], target_domain, alpha)
+            disc_out =  self.discriminator(features["res4"], target_domain, alpha)
         elif self.backbone_name == "DC5":
-            loss_discriminator =  self.discriminator(features["res5"], target_domain, alpha)
+            disc_out =  self.discriminator(features["res5"], target_domain, alpha)
+        else:
+            raise ValueError(f"Unknown backbone name: {self.backbone_name}")
+
+        loss_image_d = disc_out["loss_image_d"]
+        img_level_logits = disc_out["logits"]  # shape: [B, 1, H, W]
 
         if self.proposal_generator is not None:
-            proposals, proposal_losses = self.proposal_generator(images, features, gt_instances)
+            proposals, proposal_losses = self.proposal_generator(images, features, gt_instances, target_domain)
         else:
             assert "proposals" in batched_inputs[0]
             proposals = [x["proposals"].to(self.device) for x in batched_inputs]
@@ -192,12 +199,17 @@ class GeneralizedRCNN(nn.Module):
             if storage.iter % self.vis_period == 0:
                 self.visualize_training(batched_inputs, proposals)
 
-        #add here consistency loss
+        loss_instance_d = detector_losses.pop("loss_instance_d")
+        inst_level_logits = detector_losses.pop("logits")  
+
+        loss_consistency = consistency_regularization_loss(img_level_logits, inst_level_logits)
+
         losses = {}
         losses.update(detector_losses)
         losses.update(proposal_losses)
-        losses.update(loss_discriminator)
-        losses["loss_instance_d"] = losses.pop("loss_instance_d") #this instruction is computed only to have a better output format: 1) standard faster rcnn + 2) domain adaptive module
+        losses["loss_image_d"] = loss_image_d
+        losses["loss_instance_d"] = loss_instance_d
+        losses["loss_consistency_d"] = loss_consistency
         return losses
 
     def inference(

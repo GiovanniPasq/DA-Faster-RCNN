@@ -46,21 +46,23 @@ def do_train(cfg_source, cfg_target, model, resume = False):
     data_loader_target = build_detection_train_loader(cfg_target) 
     logger.info("Starting training from iteration {}".format(start_iter))
 
+    lambda_hyper = 0.1
+
     with EventStorage(start_iter) as storage:
         for data_source, data_target, iteration in zip(data_loader_source, data_loader_target, range(start_iter, max_iter)):
             storage.iter = iteration
 
-            loss_dict = model(data_source, False, 0.5)
-            loss_dict_target = model(data_target, True, 0.5)
+            loss_dict = model(data_source, False, 1)
+            loss_dict_target = model(data_target, True, 1)
             
             loss_dict["loss_image_d"] += loss_dict_target["loss_image_d"]
             loss_dict["loss_instance_d"] += loss_dict_target["loss_instance_d"]
-            #loss_dict["loss_consistency_d"] += loss_dict_target["loss_consistency_d"]
+            loss_dict["loss_consistency_d"] += loss_dict_target["loss_consistency_d"]
 
-            loss_dict["loss_image_d"] *= 0.5
-            loss_dict["loss_instance_d"] *= 0.5
-            #loss_dict["loss_consistency_d"] *= 0.5
-
+            loss_dict["loss_image_d"] *= ( 0.5 * lambda_hyper)
+            loss_dict["loss_instance_d"] *= ( 0.5 * lambda_hyper)
+            loss_dict["loss_consistency_d"] *= ( 0.5 * lambda_hyper)
+            
             losses = sum(loss_dict.values())
             assert torch.isfinite(losses).all(), loss_dict
 
@@ -81,24 +83,27 @@ def do_train(cfg_source, cfg_target, model, resume = False):
             periodic_checkpointer.step(iteration)
 
 cfg_source = get_cfg()
-cfg_source.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_C4_1x.yaml"))
-cfg_source.DATASETS.TRAIN = ("balloon_train",)
+cfg_source.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_FPN_1x.yaml"))
+cfg_source.DATASETS.TRAIN = ("city_trainS",)
 cfg_source.DATALOADER.NUM_WORKERS = 2
-cfg_source.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/faster_rcnn_R_50_C4_1x.yaml")
-cfg_source.SOLVER.IMS_PER_BATCH = 1
-cfg_source.SOLVER.BASE_LR = 0.0002
-cfg_source.SOLVER.MAX_ITER = 30
+cfg_source.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/faster_rcnn_R_50_FPN_1x.yaml")
+cfg_source.SOLVER.IMS_PER_BATCH = 4
+cfg_source.SOLVER.BASE_LR = 0.0005
+cfg_source.SOLVER.WARMUP_FACTOR = 1.0 / 100
+cfg_source.SOLVER.WARMUP_ITERS = 1000
+cfg_source.SOLVER.MAX_ITER = 5000
 cfg_source.INPUT.MIN_SIZE_TRAIN = (600,)
 cfg_source.INPUT.MIN_SIZE_TEST = 0
 os.makedirs(cfg_source.OUTPUT_DIR, exist_ok=True)
-cfg_source.MODEL.ROI_HEADS.NUM_CLASSES = 1
+cfg_source.MODEL.ROI_HEADS.NUM_CLASSES = 8
 model = build_model(cfg_source)
 
 cfg_target = get_cfg()
-cfg_target.DATASETS.TRAIN = ("balloon_train",)
+cfg_target.DATALOADER.FILTER_EMPTY_ANNOTATIONS = False
+cfg_target.DATASETS.TRAIN = ("city_trainT",)
 cfg_target.INPUT.MIN_SIZE_TRAIN = (600,)
 cfg_target.DATALOADER.NUM_WORKERS = 0
-cfg_target.SOLVER.IMS_PER_BATCH = 1
+cfg_target.SOLVER.IMS_PER_BATCH = 4
 
 do_train(cfg_source,cfg_target,model)
 
@@ -110,8 +115,8 @@ val_loader = build_detection_test_loader(cfg_source, "city_testT")
 res = inference_on_dataset(model, val_loader, evaluator)
 print(res)
 
-#COCO evaluation
+#COCO evaluation example
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
-evaluator = COCOEvaluator("balloon_test", cfg_source, False, output_dir="./output/")
-val_loader = build_detection_test_loader(cfg_source, "balloon_test")
+evaluator = COCOEvaluator("dataset_test_real", cfg_source, False, output_dir="./output/")
+val_loader = build_detection_test_loader(cfg_source, "dataset_test_real")
 inference_on_dataset(model, val_loader, evaluator)
