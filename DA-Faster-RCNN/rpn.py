@@ -472,11 +472,12 @@ class RPN(nn.Module):
                 # If we are using the target domain, we do not have ground truth instances
                 # and we skip the loss computation.
                 losses = {}
-            assert gt_instances is not None, "RPN requires gt_instances in training!"
-            gt_labels, gt_boxes = self.label_and_sample_anchors(anchors, gt_instances)
-            losses = self.losses(
-                anchors, pred_objectness_logits, gt_labels, pred_anchor_deltas, gt_boxes
-            )
+            else:
+                assert gt_instances is not None, "RPN requires gt_instances in training!"
+                gt_labels, gt_boxes = self.label_and_sample_anchors(anchors, gt_instances)
+                losses = self.losses(
+                    anchors, pred_objectness_logits, gt_labels, pred_anchor_deltas, gt_boxes
+                )
         else:
             losses = {}
         proposals = self.predict_proposals(
